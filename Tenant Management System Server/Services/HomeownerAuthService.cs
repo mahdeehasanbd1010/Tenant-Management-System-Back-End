@@ -27,11 +27,17 @@ namespace Tenant_Management_System_Server.Services
         public async Task<HomeownerModel?> GetAsync(string id) =>
             await _homeownerAuthCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+        public async Task<HomeownerModel> GetByUserNameAsync(string? username) =>
+            await _homeownerAuthCollection.Find(x => x.UserName == username).FirstOrDefaultAsync();
+
         public async Task CreateAsync(HomeownerModel homeowner) =>
             await _homeownerAuthCollection.InsertOneAsync(homeowner);
 
         public async Task UpdateAsync(string id, HomeownerModel updatedHomeowner) =>
             await _homeownerAuthCollection.ReplaceOneAsync(x => x.Id == id, updatedHomeowner);
+
+        public async Task UpdateByUserNameAsync(string userName, HomeownerModel updatedHomeowner) =>
+            await _homeownerAuthCollection.ReplaceOneAsync(x => x.UserName == userName, updatedHomeowner);
 
         public async Task RemoveAsync(string id) =>
             await _homeownerAuthCollection.DeleteOneAsync(x => x.Id == id);
@@ -60,7 +66,6 @@ namespace Tenant_Management_System_Server.Services
                     {
                         return true;
                     }
-                    break;
                 }
             }
 

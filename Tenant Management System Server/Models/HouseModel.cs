@@ -9,6 +9,12 @@ namespace Tenant_Management_System_Server.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
+        [BsonElement("HouseId")]
+        public string HouseId { get; set; } = null!;
+
+        [BsonElement("HomeownerUserName")]
+        public string HomeownerUserName { get; set; } = null!;
+
         [BsonElement("Address")]
         public string Address { get; set; } = null!;
 

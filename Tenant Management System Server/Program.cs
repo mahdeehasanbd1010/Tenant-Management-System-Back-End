@@ -1,3 +1,5 @@
+using DinkToPdf.Contracts;
+using DinkToPdf;
 using Tenant_Management_System_Server.Extensions;
 using Tenant_Management_System_Server.Models;
 using Tenant_Management_System_Server.Services;
@@ -12,6 +14,8 @@ builder.Services.AddJWTTokenServices(builder.Configuration);
 //Add Services
 builder.Services.AddSingleton<HomeownerAuthService>();
 builder.Services.AddSingleton<TenantAuthService>();
+builder.Services.AddSingleton<TenantRegistrationFormService>();
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 //Add MongoDB DataBaseSettings
 builder.Services.Configure<DatabaseSettings>(

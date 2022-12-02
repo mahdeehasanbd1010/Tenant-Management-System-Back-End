@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tenant_Management_System_Server.Models;
 using Tenant_Management_System_Server.Services;
@@ -10,16 +11,24 @@ namespace Tenant_Management_System_Server.Controllers
     public class TenantAuthController : ControllerBase
     {
         private readonly TenantAuthService _tenantAuthService;
+        private readonly HomeownerAuthService _homeownerAuthService;
+        private readonly JwtSettings _jwtSettings;
 
-        public TenantAuthController(TenantAuthService tenantAuthService) =>
-           _tenantAuthService = tenantAuthService;
+        public TenantAuthController(TenantAuthService tenantAuthService, HomeownerAuthService homeownerAuthService, JwtSettings jwtSettings)
+        {
+            _jwtSettings = jwtSettings;
+            _homeownerAuthService = homeownerAuthService;
+            _tenantAuthService = tenantAuthService;
+        }
 
         [HttpGet("getAllTenant")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public async Task<List<TenantModel>> GetAllHomeowner() =>
         await _tenantAuthService.GetAsync();
 
 
         [HttpGet("getTenant/{id:length(24)}")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TenantModel>> Get(string id)
         {
             var tenant = await _tenantAuthService.GetAsync(id);
@@ -54,13 +63,31 @@ namespace Tenant_Management_System_Server.Controllers
 
             if (!response)
             {
-                return BadRequest();
+                return BadRequest("Invalid tenant request");
             }
 
-            return Ok(200);
+            if (response)
+            {
+                var token = new UserTokens();
+                var tenant = await _tenantAuthService.GetByUserNameAsync(loginModel.UserName);
+                token = JwtHelpers.JwtHelpers.GenTokenkey(new UserTokens()
+                {
+                    Email = tenant.Email,
+                    GuidId = Guid.NewGuid(),
+                    UserName = tenant.UserName,
+                    FullName = tenant.FullName,
+                    Id = tenant.Id,
+                    UserType = tenant.UserType,
+                }, _jwtSettings);
+
+                return Ok(token);
+            }
+
+            return Unauthorized();
         }
 
         [HttpPut("{id:length(24)}")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Update(string id, TenantModel updatedTenant)
         {
             var tenant = await _tenantAuthService.GetAsync(id);
@@ -78,6 +105,7 @@ namespace Tenant_Management_System_Server.Controllers
         }
 
         [HttpDelete("{id:length(24)}")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Delete(string id)
         {
             var tenant = await _tenantAuthService.GetAsync(id);

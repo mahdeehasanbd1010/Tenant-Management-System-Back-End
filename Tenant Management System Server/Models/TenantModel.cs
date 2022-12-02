@@ -9,6 +9,9 @@ namespace Tenant_Management_System_Server.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
+        [BsonElement("UserType")]
+        public string UserType { get; set; } = "Tenant"!;
+
         [BsonElement("FullName")]
         public string FullName { get; set; } = null!;
 

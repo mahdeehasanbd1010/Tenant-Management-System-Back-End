@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.23.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.17.1" />

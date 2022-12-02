@@ -9,6 +9,9 @@ namespace Tenant_Management_System_Server.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
+        [BsonElement("UserType")]
+        public string UserType { get; set; } = "Homeowner"!;
+
         [BsonElement("FullName")]
         public string FullName { get; set; } = null!;
 
@@ -16,7 +19,7 @@ namespace Tenant_Management_System_Server.Models
         public string UserName { get; set; } = null!;
 
         [BsonElement("Email")]
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
 
         [BsonElement("Password")]
         public string Password { get; set; } = null!;
