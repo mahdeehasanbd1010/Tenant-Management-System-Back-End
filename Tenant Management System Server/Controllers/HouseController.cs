@@ -70,8 +70,8 @@ namespace Tenant_Management_System_Server.Controllers
             return NoContent();
         }
 
-        [HttpGet("getAllFlat/{homeownerUserName}/{houseId}")]
-        public async Task<ActionResult<List<FlatModel>>> GetAllFlat(string homeownerUserName, string houseId)
+        [HttpGet("getHouseDetailsInfo/{homeownerUserName}/{houseId}")]
+        public async Task<ActionResult<HouseModel>> GetHouseDetails(string homeownerUserName, string houseId)
         {
             var homeowner = await _homeownerAuthService.GetByUserNameAsync(homeownerUserName);
 
@@ -84,11 +84,47 @@ namespace Tenant_Management_System_Server.Controllers
             {
                 if(house.HouseId == houseId)
                 {
-                    return house.FlatList;
+                    return house;
                 }
             }
 
             return NotFound();
+        }
+
+
+        [HttpPost("updateHouseDetailsInfo/{homeownerUserName}/{houseId}")]
+        public async Task<ActionResult<HouseModel>> UpdteHouseDetails(string homeownerUserName, string houseId, [FromBody] HouseModel updatedHouse)
+        {
+            var homeowner = await _homeownerAuthService.GetByUserNameAsync(homeownerUserName);
+
+            if (homeowner is null)
+            {
+                return NotFound();
+            }
+
+            var flag = false;
+            foreach (var house in homeowner.HouseList)
+            {
+                if (house.HouseId == houseId)
+                {
+                    int index = homeowner.HouseList.IndexOf(house);
+                    if (index != -1)
+                    {
+                        homeowner.HouseList[index] = updatedHouse;
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!flag)
+            {
+                return BadRequest();
+            }
+
+            await _homeownerAuthService.UpdateByUserNameAsync(homeownerUserName, homeowner);
+
+            return Ok(updatedHouse);
         }
 
         [HttpGet("getFlat/{homeownerUserName}/{houseId}/{flatId}")]
@@ -151,6 +187,7 @@ namespace Tenant_Management_System_Server.Controllers
 
             return NoContent();
         }
+
 
         [HttpPost("updateFlat/{flatId}")]
         public async Task<IActionResult> updateFlat(string flatId, [FromBody] FlatModel updatedFlat)

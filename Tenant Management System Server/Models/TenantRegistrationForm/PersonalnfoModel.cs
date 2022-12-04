@@ -2,7 +2,7 @@
 
 namespace Tenant_Management_System_Server.Models.TenantRegistrationForm
 {
-    public class PersonalnfoModel
+    public class PersonalInfoModel
     {
         [BsonElement("Name")]
         public string Name { get; set; } = null!;
@@ -19,7 +19,7 @@ namespace Tenant_Management_System_Server.Models.TenantRegistrationForm
         [BsonElement("PermanentAddress")]
         public string PermanentAddress { get; set; } = null!;
 
-        [BsonElement("Occuaption")]
+        [BsonElement("Occupation")]
         public string Occupation { get; set; } = null!;
 
         [BsonElement("AddressOfTheInstitutionOrWorkPlace")]
@@ -45,10 +45,6 @@ namespace Tenant_Management_System_Server.Models.TenantRegistrationForm
 
         [BsonElement("Signature")]
         public string Signature { get; set; } = null!;
-
-        [BsonElement("Date")]
-        public string Date { get; set; } = null!;
-
 
     }
 }

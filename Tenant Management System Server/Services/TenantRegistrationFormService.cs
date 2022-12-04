@@ -34,6 +34,9 @@ namespace Tenant_Management_System_Server.Services
         public async Task RemoveAsync(string id) =>
             await _tenantRegistrationFormCollection.DeleteOneAsync(x => x.Id == id);
 
+        public async Task RemoveByUserNameAsync(string username) =>
+            await _tenantRegistrationFormCollection.DeleteOneAsync(x => x.UserName == username);
+
         public async Task<TenantRegistrationFormModel?> SaveInfoAsync(TenantRegistrationFormModel tenantRegistrationFormModel)
         {
             await CreateAsync(tenantRegistrationFormModel);

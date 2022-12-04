@@ -12,19 +12,34 @@ namespace Tenant_Management_System_Server.Controllers
     public class TenantRegistrationFormController : ControllerBase
     {
         private readonly TenantRegistrationFormService _tenantRegistrationFormService = null!;
+        private readonly TenantAuthService _tenantAuthService = null!;
         private readonly JwtSettings _jwtSettings;
 
-        public TenantRegistrationFormController(TenantRegistrationFormService tenantRegistrationFormService, JwtSettings jwtSettings)
+        public TenantRegistrationFormController(TenantRegistrationFormService tenantRegistrationFormService, TenantAuthService tenantAuthService, JwtSettings jwtSettings)
         {
             _tenantRegistrationFormService = tenantRegistrationFormService;
+            _tenantAuthService = tenantAuthService;
             _jwtSettings = jwtSettings;
         }
 
-        [HttpGet("getTenantInfo/{id:length(24)}")]
-        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        /*[HttpGet("getTenantInfo/{id:length(24)}")]
+        //[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TenantRegistrationFormModel>> Get(string id)
         {
             var tenantRegistrationForm = await _tenantRegistrationFormService.GetAsync(id);
+
+            if (tenantRegistrationForm is null)
+            {
+                return NotFound();
+            }
+
+            return tenantRegistrationForm;
+        }*/
+
+        [HttpGet("getTenantInfo/{tenantUserName}")]
+        public async Task<ActionResult<TenantRegistrationFormModel>> Get(string tenantUserName)
+        {
+            var tenantRegistrationForm = await _tenantRegistrationFormService.GetByUserNameAsync(tenantUserName);
 
             if (tenantRegistrationForm is null)
             {
@@ -38,6 +53,17 @@ namespace Tenant_Management_System_Server.Controllers
         [HttpPost("save")]
         public async Task<IActionResult> SaveInfo([FromBody] TenantRegistrationFormModel newTenantRegistrationFormModel)
         {
+            var tenantRegistrationFormModel = await _tenantRegistrationFormService.GetByUserNameAsync(newTenantRegistrationFormModel.UserName);
+
+            if(tenantRegistrationFormModel != null)
+            {
+                return BadRequest();
+            }
+
+            var tenant = await _tenantAuthService.GetByUserNameAsync(newTenantRegistrationFormModel.UserName);
+            tenant.IsTenantFormFillUp = true;
+
+            await _tenantAuthService.UpdateByUserNameAsync(newTenantRegistrationFormModel.UserName, tenant);
 
             var response = await _tenantRegistrationFormService.SaveInfoAsync(newTenantRegistrationFormModel);
 

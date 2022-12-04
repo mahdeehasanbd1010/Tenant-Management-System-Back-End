@@ -12,8 +12,11 @@ namespace Tenant_Management_System_Server.Models.TenantRegistrationForm
         [BsonElement("UserName")]
         public string UserName { get; set; } = null!;
 
+        [BsonElement("RegistrationDate")]
+        public string RegistrationDate { get; set; } = null!;
+
         [BsonElement("PersonalInfo")]
-        public PersonalnfoModel PersonalInfo { get; set; } = new PersonalnfoModel();
+        public PersonalInfoModel PersonalInfo { get; set; } = new PersonalInfoModel();
 
         [BsonElement("EmergencyContact")]
         public EmergencyContactModel EmergencyContact { get; set; } = new EmergencyContactModel();

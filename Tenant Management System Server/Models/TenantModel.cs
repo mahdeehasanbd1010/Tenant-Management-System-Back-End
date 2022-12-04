@@ -18,6 +18,9 @@ namespace Tenant_Management_System_Server.Models
         [BsonElement("HomeownerUsername")]
         public string HomeownerUsername { get; set; } = null!;
 
+        [BsonElement("HouseId")]
+        public string HouseId { get; set; } = null!;
+
         [BsonElement("FlatId")]
         public string FlatId { get; set; } = null!;
 
@@ -25,12 +28,18 @@ namespace Tenant_Management_System_Server.Models
         public string UserName { get; set; } = null!;
 
         [BsonElement("Email")]
-        public string? Email { get; set; }
+        public string? Email { get; set; } = null!;
 
         [BsonElement("Password")]
         public string Password { get; set; } = null!;
 
         [BsonElement("PhoneNumber")]
         public string PhoneNumber { get; set; } = null!;
+
+        [BsonElement("IsTenantFormFillUp")]
+        public bool IsTenantFormFillUp { get; set; } = false;
+
+        [BsonElement("IsRentRequestAccept")]
+        public bool IsRentRequestAccept { get; set; } = false;
     }
 }

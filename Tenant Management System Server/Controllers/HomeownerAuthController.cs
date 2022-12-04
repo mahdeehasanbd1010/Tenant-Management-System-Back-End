@@ -66,7 +66,7 @@ namespace Tenant_Management_System_Server.Controllers
 
             await _homeownerAuthService.UpdateByUserNameAsync(homeownerUserName, homeowner);
 
-            return Ok();
+            return Ok(updatedHomeowner);
         }
 
         [HttpPost("signUp")]

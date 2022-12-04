@@ -40,8 +40,14 @@ namespace Tenant_Management_System_Server.Services
         public async Task UpdateAsync(string id, TenantModel updatedTenant) =>
             await _tenantAuthCollection.ReplaceOneAsync(x => x.Id == id, updatedTenant);
 
+        public async Task UpdateByUserNameAsync(string userName, TenantModel updatedTenant) =>
+            await _tenantAuthCollection.ReplaceOneAsync(x => x.UserName == userName, updatedTenant);
+
         public async Task RemoveAsync(string id) =>
             await _tenantAuthCollection.DeleteOneAsync(x => x.Id == id);
+
+        public async Task RemoveByUserNameAsync(string userName) =>
+            await _tenantAuthCollection.DeleteOneAsync(x => x.UserName == userName);
 
         public async Task<TenantModel?> SignUpAsync(TenantModel tenantModel)
         {
@@ -52,6 +58,29 @@ namespace Tenant_Management_System_Server.Services
                 return null;
             }
 
+            //check houseId & flatId
+            var flag = false;
+
+            foreach (var house in homeowner.HouseList) {
+                if(house.HouseId == tenantModel.HouseId)
+                {
+                    foreach(var flat in house.FlatList)
+                    {
+                        if(flat.FlatId == tenantModel.FlatId && !flat.IsRent)
+                        {
+                            flat.IsRentRequest = true;
+                            flag = true;
+                        }
+                    }
+                }
+            }
+
+            if (!flag)
+            {
+                return null;
+            }
+
+            //check duplicate username
             var tenantList = await GetAsync();
             foreach (var _tenant in tenantList)
             {
