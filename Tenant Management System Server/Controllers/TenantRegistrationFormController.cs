@@ -13,12 +13,15 @@ namespace Tenant_Management_System_Server.Controllers
     {
         private readonly TenantRegistrationFormService _tenantRegistrationFormService = null!;
         private readonly TenantAuthService _tenantAuthService = null!;
+        private readonly HomeownerAuthService _homeownerAuthService = null!;
         private readonly JwtSettings _jwtSettings;
 
-        public TenantRegistrationFormController(TenantRegistrationFormService tenantRegistrationFormService, TenantAuthService tenantAuthService, JwtSettings jwtSettings)
+        public TenantRegistrationFormController(TenantRegistrationFormService tenantRegistrationFormService, 
+            TenantAuthService tenantAuthService, JwtSettings jwtSettings, HomeownerAuthService homeownerAuthService)
         {
             _tenantRegistrationFormService = tenantRegistrationFormService;
             _tenantAuthService = tenantAuthService;
+            _homeownerAuthService= homeownerAuthService;
             _jwtSettings = jwtSettings;
         }
 
@@ -64,6 +67,25 @@ namespace Tenant_Management_System_Server.Controllers
             tenant.IsTenantFormFillUp = true;
 
             await _tenantAuthService.UpdateByUserNameAsync(newTenantRegistrationFormModel.UserName, tenant);
+
+            var homeowner = await _homeownerAuthService.GetByUserNameAsync(tenant.HomeownerUsername);
+            if (homeowner == null)
+            {
+                return NotFound();
+            }
+
+            foreach(var house in homeowner.HouseList)
+            {
+                foreach(var flat in house.FlatList)
+                {
+                    if(flat.FlatId == tenant.FlatId)
+                    {
+                        flat.IsRentRequest = true;
+                        break;
+                    }
+                }
+            }
+            await _homeownerAuthService.UpdateByUserNameAsync(homeowner.UserName, homeowner);
 
             var response = await _tenantRegistrationFormService.SaveInfoAsync(newTenantRegistrationFormModel);
 

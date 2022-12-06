@@ -15,6 +15,7 @@ builder.Services.AddJWTTokenServices(builder.Configuration);
 builder.Services.AddSingleton<HomeownerAuthService>();
 builder.Services.AddSingleton<TenantAuthService>();
 builder.Services.AddSingleton<TenantRegistrationFormService>();
+builder.Services.AddSingleton<TransactionService>();
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 //Add MongoDB DataBaseSettings
